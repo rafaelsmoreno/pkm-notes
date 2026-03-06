@@ -1,0 +1,189 @@
+(ns frontend.handler
+  "Main ns that handles application startup. Closest ns that we have to a
+  system. Contains a couple of small system components"
+  (:require [cljs-bean.core :as bean]
+            [electron.ipc :as ipc]
+            [electron.listener :as el]
+            [frontend.components.block :as block]
+            [frontend.components.content :as cp-content]
+            [frontend.components.editor :as editor]
+            [frontend.components.page :as page]
+            [frontend.components.reference :as reference]
+            [frontend.components.user.login :as user.login]
+            [frontend.config :as config]
+            [frontend.context.i18n :as i18n]
+            [frontend.db.react :as react]
+            [frontend.db.restore :as db-restore]
+            [frontend.error :as error]
+            [frontend.handler.command-palette :as command-palette]
+            [frontend.handler.db-based.vector-search-flows :as vector-search-flows]
+            [frontend.handler.e2ee]
+            [frontend.handler.events :as events]
+            [frontend.handler.events.rtc]
+            [frontend.handler.events.ui]
+            [frontend.handler.global-config :as global-config-handler]
+            [frontend.handler.page :as page-handler]
+            [frontend.handler.plugin :as plugin-handler]
+            [frontend.handler.plugin-config :as plugin-config-handler]
+            [frontend.handler.repo :as repo-handler]
+            [frontend.handler.repo-config :as repo-config-handler]
+            [frontend.handler.ui :as ui-handler]
+            [frontend.handler.user :as user-handler]
+            [frontend.idb :as idb]
+            [frontend.mobile.util :as mobile-util]
+            [frontend.modules.instrumentation.core :as instrument]
+            [frontend.modules.shortcut.core :as shortcut]
+            [frontend.persist-db :as persist-db]
+            [frontend.persist-db.browser :as db-browser]
+            [frontend.state :as state]
+            [frontend.util :as util]
+            [goog.object :as gobj]
+            [lambdaisland.glogi :as log]
+            [promesa.core :as p]))
+
+(defn- set-global-error-notification!
+  []
+  (set! js/window.onerror
+        (fn [message, _source, _lineno, _colno, error]
+          (when-not (error/ignored? message)
+            (log/error :exception error)))))
+
+(defn- watch-for-date!
+  []
+  (let [f (fn []
+            (page-handler/create-today-journal!))]
+    (f)
+    (js/setInterval f 3000)))
+
+(defn restore-and-setup!
+  [repo]
+  (when repo
+    (-> (p/let [_ (db-restore/restore-graph! repo)]
+          (repo-config-handler/start {:repo repo}))
+        (p/then
+         (fn []
+           ;; try to load custom css only for current repo
+           (ui-handler/add-style-if-exists!)
+
+           (->
+            (p/do!
+             (when (config/global-config-enabled?)
+               (global-config-handler/start {:repo repo}))
+             (when (config/plugin-config-enabled?)
+               (plugin-config-handler/start)))
+            (p/finally
+              (fn []
+                ;; install after config is restored
+                (shortcut/refresh!)
+
+                (state/set-db-restoring! false))))))
+        (p/then
+         (fn []
+           (js/console.log "db restored, setting up repo hooks")
+
+           (page-handler/init-commands!)
+
+           (watch-for-date!)))
+        (p/catch (fn [error]
+                   (log/error :exception error))))))
+
+(defn- handle-connection-change
+  [e]
+  (let [online? (= (gobj/get e "type") "online")]
+    (state/set-online! online?)))
+
+(defn set-network-watcher!
+  []
+  (js/window.addEventListener "online" handle-connection-change)
+  (js/window.addEventListener "offline" handle-connection-change))
+
+(defn- register-components-fns!
+  []
+  (state/set-page-blocks-cp! page/page-cp)
+  (state/set-component! :block/->hiccup block/->hiccup)
+  (state/set-component! :block/linked-references reference/references)
+  (state/set-component! :block/container block/block-container)
+  (state/set-component! :block/inline-title block/inline-title)
+  (state/set-component! :block/breadcrumb block/breadcrumb)
+  (state/set-component! :block/reference block/block-reference)
+  (state/set-component! :block/blocks-container block/blocks-container)
+  (state/set-component! :block/properties-cp block/db-properties-cp)
+  (state/set-component! :block/page-cp block/page-cp)
+  (state/set-component! :block/inline-text block/inline-text)
+  (state/set-component! :block/asset-cp block/asset-cp)
+  (state/set-component! :editor/box editor/box)
+  (state/set-component! :selection/context-menu cp-content/custom-context-menu-content)
+  (command-palette/register-global-shortcut-commands))
+
+(defn- get-system-info
+  []
+  (when (util/electron?)
+    (p/let [info (ipc/ipc :system/info)]
+      (state/set-state! :system/info (bean/->clj info)))))
+
+(defn start!
+  [render]
+  (let [t1 (util/time-ms)]
+    (p/do!
+     (idb/start)
+     (plugin-handler/setup!)
+     (render))
+
+    (get-system-info)
+    (set-global-error-notification!)
+
+    (register-components-fns!)
+    (user-handler/restore-tokens-from-localstorage)
+    (user.login/setup-configure!)
+    (state/set-db-restoring! true)
+    (when (util/electron?)
+      (el/listen!))
+
+    (i18n/start)
+    (instrument/init)
+
+    (react/run-custom-queries-when-idle!)
+
+    (events/run!)
+
+    (log/info ::start-web-worker {})
+
+    (p/do!
+     (-> (p/let [t2 (util/time-ms)
+                 _ (db-browser/start-db-worker!)
+                 _ (log/info ::db-worker-spent-time (- (util/time-ms) t2))
+                 repos (repo-handler/get-repos)
+                 _ (state/set-repos! repos)
+                 _ (mobile-util/hide-splash) ;; hide splash as early as ui is stable
+                 repo (or (state/get-current-repo) (:url (first repos)))
+                 _ (if (empty? repos)
+                     (repo-handler/new-db! config/demo-repo)
+                     (restore-and-setup! repo))]
+           (set-network-watcher!)
+
+           (when (util/electron?)
+             (persist-db/run-export-periodically!))
+           (when (mobile-util/native-platform?)
+             (state/restore-mobile-theme!)))
+         (p/catch (fn [e]
+                    (js/console.error "Error while restoring repos: " e)))
+         (p/finally (fn []
+                      (state/set-db-restoring! false)
+                      (p/resolve! state/app-ready-promise true)
+                      (log/info ::app-init-spent-time (- (util/time-ms) t1))
+                      (when-not (util/mobile?)
+                        (p/let [webgpu-available? (db-browser/<check-webgpu-available?)]
+                          (log/info :webgpu-available? webgpu-available?)
+                          (when webgpu-available?
+                            (p/do! (db-browser/start-inference-worker!)
+                                   (db-browser/<connect-db-worker-and-infer-worker!)
+                                   (reset! vector-search-flows/*infer-worker-ready true))))
+                        nil)))))))
+
+(defn stop! []
+  (prn "stop!"))
+
+(defn quit-and-install-new-version!
+  []
+  (p/let [_ (ipc/invoke "set-quit-dirty-state" false)]
+    (ipc/ipc :quitAndInstall)))

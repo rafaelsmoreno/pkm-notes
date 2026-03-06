@@ -1,0 +1,4 @@
+{:paths ["src"]
+ :api-namespaces [logseq.graph-parser.exporter
+                  logseq.graph-parser.schema.mldoc]
+ :report {:format :ignore}}

@@ -1,0 +1,155 @@
+(ns frontend.components.page-menu
+  (:require [frontend.commands :as commands]
+            [frontend.components.export :as export]
+            [frontend.config :as config]
+            [frontend.context.i18n :refer [t]]
+            [frontend.db :as db]
+            [frontend.handler.common.developer :as dev-common-handler]
+            [frontend.handler.db-based.page :as db-page-handler]
+            [frontend.handler.notification :as notification]
+            [frontend.handler.page :as page-handler]
+            [frontend.handler.publish :as publish-handler]
+            [frontend.mobile.util :as mobile-util]
+            [frontend.state :as state]
+            [frontend.util :as util]
+            [logseq.db :as ldb]
+            [logseq.shui.hooks :as hooks]
+            [logseq.shui.ui :as shui]
+            [promesa.core :as p]
+            [rum.core :as rum]))
+
+(rum/defc publish-page-dialog
+  [page]
+  (let [[password set-password!] (hooks/use-state "")
+        [publishing? set-publishing!] (hooks/use-state false)
+        submit! (fn []
+                  (when-not publishing?
+                    (set-publishing! true)
+                    (-> (publish-handler/publish-page! page {:password password})
+                        (p/finally (fn []
+                                     (set-publishing! false)
+                                     (shui/dialog-close!))))))]
+    [:form.flex.flex-col.gap-4.p-2
+     {:on-submit (fn [e]
+                   (.preventDefault e)
+                   (submit!))}
+     [:div.text-lg.font-medium "Publish page"]
+     [:div.text-sm.opacity-70
+      "Optionally protect this page with a password. Leave empty for public access."]
+     (shui/toggle-password
+      {:placeholder "Optional password"
+       :value password
+       :on-change (fn [e]
+                    (set-password! (util/evalue e)))})
+     [:div.flex.justify-end.gap-2
+      (shui/button
+       {:variant "ghost"
+        :type "button"
+        :on-click #(shui/dialog-close!)}
+       "Cancel")
+      (shui/button
+       {:type "submit"
+        :auto-focus true
+        :disabled publishing?}
+       (if publishing?
+         "Publishing..."
+         "Publish"))]]))
+
+(defn- delete-page!
+  [page]
+  (page-handler/<delete! (:block/uuid page)
+                         (fn []
+                           (notification/show! (str "Page " (:block/title page) " was deleted successfully!")
+                                               :success))
+                         {:error-handler (fn [{:keys [msg]}]
+                                           (notification/show! msg :warning))}))
+
+(defn delete-page-confirm!
+  [page]
+  (when page
+    (-> (shui/dialog-confirm!
+         {:title [:h3.text-lg.leading-6.font-medium.flex.gap-2.items-center
+                  [:span.top-1.relative
+                   (shui/tabler-icon "alert-triangle")]
+                  (t :page/db-delete-confirmation)]
+          :content [:p.opacity-60 (str "- " (:block/title page))]
+          :outside-cancel? true})
+        (p/then #(delete-page! page))
+        (p/catch #()))))
+
+(defn ^:large-vars/cleanup-todo page-menu
+  [page]
+  (when-let [page-name (and page (db/page? page) (:block/name page))]
+    (let [page-title (str (:block/uuid page))
+          block? (and page (util/uuid-string? page-name))
+          contents? (= page-name "contents")
+          public? (:logseq.property/publishing-public? page)
+          _favorites-updated? (state/sub :favorites/updated?)
+          favorited? (page-handler/favorited? page-title)
+          developer-mode? (state/sub [:ui/developer-mode?])
+          _ (state/sub :auth/id-token)]
+      (when (not block?)
+        (->>
+         [(when-not config/publishing?
+            {:title   (if favorited?
+                        (t :page/unfavorite)
+                        (t :page/add-to-favorites))
+             :options {:on-click
+                       (fn []
+                         (if favorited?
+                           (page-handler/<unfavorite-page! page-title)
+                           (page-handler/<favorite-page! page-title)))}})
+
+          (when (or (util/electron?)
+                    (mobile-util/native-platform?))
+            {:title   (t :page/copy-page-url)
+             :options {:on-click #(page-handler/copy-page-url (:block/uuid page))}})
+
+          (when-not (or contents?
+                        config/publishing?
+                        (:logseq.property/built-in? page))
+            {:title   (t :page/delete)
+             :options {:on-click #(delete-page-confirm! page)}})
+
+          (when page
+            {:title   (t :export-page)
+             :options {:on-click #(shui/dialog-open!
+                                   (fn []
+                                     (export/export-blocks [(:block/uuid page)] {:export-type :page}))
+                                   {:class "w-auto md:max-w-4xl max-h-[80vh] overflow-y-auto"})}})
+
+          (when (and page (not config/publishing?))
+            {:title   "Publish page"
+             :options {:on-click #(shui/dialog-open! (fn [] (publish-page-dialog page))
+                                                     {:class "w-auto max-w-md"})}})
+
+          (when (util/electron?)
+            {:title   (t (if public? :page/make-private :page/make-public))
+             :options {:on-click
+                       (fn []
+                         (page-handler/update-public-attribute!
+                          page
+                          (if public? false true)))}})
+
+          (when config/lsp-enabled?
+            (for [[_ {:keys [label] :as cmd} action pid] (state/get-plugins-commands-with-type :page-menu-item)]
+              {:title label
+               :options {:on-click #(commands/exec-plugin-simple-command!
+                                     pid (assoc cmd :page page-name) action)}}))
+
+          (when (and (ldb/internal-page? page) (not (:logseq.property/built-in? page)))
+            {:title (t :page/convert-to-tag)
+             :options {:on-click (fn []
+                                   (db-page-handler/convert-page-to-tag! page))}})
+
+          (when (and (ldb/class? page) (not (:logseq.property/built-in? page)))
+            {:title (t :page/convert-tag-to-page)
+             :options {:on-click (fn []
+                                   (db-page-handler/convert-tag-to-page! page))}})
+
+          (when developer-mode?
+            {:title   (t :dev/show-page-data)
+             :options {:on-click (fn []
+                                   (dev-common-handler/show-entity-data (:db/id page)))}})]
+         (flatten)
+         (remove nil?))))))

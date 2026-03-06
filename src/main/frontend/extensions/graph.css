@@ -1,0 +1,18 @@
+#global-graph,
+#page-graph {
+    min-height: 100% !important;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 4;
+}
+
+
+.graph {
+    height: 500px;
+}
+
+#main-content-container .graph {
+    height: calc(100vh - 100px) !important;
+}
