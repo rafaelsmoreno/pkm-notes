@@ -122,8 +122,8 @@
   are full paths"
   [file-graph-dir db-graph-dir conn options]
   (let [*files (build-graph-files file-graph-dir)
-        config-file (first (filter #(string/ends-with? (:path %) "logseq/config.edn") *files))
-        _ (assert config-file "No 'logseq/config.edn' found for file graph dir")
+        config-file (first (filter #(string/ends-with? (:path %) "pkm-notes/config.edn") *files))
+        _ (assert config-file "No 'pkm-notes/config.edn' found for file graph dir")
         options (merge options
                        (default-export-options options)
                         ;; asset file options

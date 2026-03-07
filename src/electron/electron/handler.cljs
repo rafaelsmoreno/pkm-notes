@@ -53,7 +53,7 @@
       (let [file-name   (-> (string/replace path (str repo-dir "/") "")
                             (string/replace "/" "_")
                             (string/replace "\\" "_"))
-            recycle-dir (str repo-dir "/logseq/.recycle")
+            recycle-dir (str repo-dir "/pkm-notes/.recycle")
             _           (fs-extra/ensureDirSync recycle-dir)
             new-path    (str recycle-dir "/" file-name)]
         (fs/renameSync path new-path)

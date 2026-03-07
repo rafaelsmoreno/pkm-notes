@@ -37,7 +37,7 @@
 (defn get-custom-css
   []
   (when-let [repo (state/get-current-repo)]
-    (get-file repo "logseq/custom.css")))
+    (get-file repo "pkm-notes/custom.css")))
 
 (defn get-block-by-uuid
   [id]

@@ -32,7 +32,7 @@
 
     (let [conn* (sqlite-cli/open-db! "tmp/graphs" "test-db")
           _ (d/transact! conn* (sqlite-create-graph/build-db-initial-data "{}"))
-          blocks [{:file/path "logseq/config.edn"
+          blocks [{:file/path "pkm-notes/config.edn"
                    :file/content "{:foo :bar}"}]
           _ (d/transact! conn* blocks)
           ;; Simulate getting data from sqlite and restoring it for frontend
@@ -41,7 +41,7 @@
       (is (= blocks
              (->> @conn
                   (d/q '[:find (pull ?b [:file/path :file/content])
-                         :where [?b :file/content] [?b :file/path "logseq/config.edn"]])
+                         :where [?b :file/content] [?b :file/path "pkm-notes/config.edn"]])
                   (map first)))
           "Correct file with content is found"))))
 

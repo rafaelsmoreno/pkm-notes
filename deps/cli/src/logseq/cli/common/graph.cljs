@@ -17,7 +17,7 @@
 (defn get-db-graphs-dir
   "Directory where DB graphs are stored"
   []
-  (node-path/join (os/homedir) "logseq" "graphs"))
+  (node-path/join (os/homedir) "pkm-notes" "graphs"))
 
 (defn get-db-based-graphs
   []

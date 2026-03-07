@@ -52,10 +52,10 @@
 
 (defn set_file_content
   [path content]
-  (let [built-in-paths #{"logseq/custom.js"
-                         "logseq/custom.css"
-                         "logseq/publish.js"
-                         "logseq/publish.css"}]
+  (let [built-in-paths #{"pkm-notes/custom.js"
+                         "pkm-notes/custom.css"
+                         "pkm-notes/publish.js"
+                         "pkm-notes/publish.css"}]
     (cond
       (not (string? content))
       (throw (ex-info "content should be a string"

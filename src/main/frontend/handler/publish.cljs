@@ -69,12 +69,12 @@
   #{"png" "jpg" "jpeg" "webp"})
 
 (def ^:private custom-publish-assets
-  [{:path (path/path-join "logseq" "publish.css")
+  [{:path (path/path-join "pkm-notes" "publish.css")
     :type "css"
     :content-type "text/css; charset=utf-8"
     :meta-key :custom_publish_css_hash
     :asset-name "publish.css"}
-   {:path (path/path-join "logseq" "publish.js")
+   {:path (path/path-join "pkm-notes" "publish.js")
     :type "js"
     :content-type "text/javascript; charset=utf-8"
     :meta-key :custom_publish_js_hash

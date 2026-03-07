@@ -744,15 +744,15 @@
                       :logseq.property.view/feature-type :linked-references,
                       :logseq.property/view-for [:block/uuid journal-uuid]}}]}]
          ::sqlite-export/graph-files
-         [{:file/path "logseq/config.edn"
+         [{:file/path "pkm-notes/config.edn"
            :file/content "{:foo :bar}"}
-          {:file/path "logseq/custom.css"
+          {:file/path "pkm-notes/custom.css"
            :file/content ".foo {background-color: blue}"}
-          {:file/path "logseq/custom.js"
+          {:file/path "pkm-notes/custom.js"
            :file/content "// comment"}
-          {:file/path "logseq/publish.css"
+          {:file/path "pkm-notes/publish.css"
            :file/content ""}
-          {:file/path "logseq/publish.js"
+          {:file/path "pkm-notes/publish.js"
            :file/content ""}]
          :build-existing-tx? true}]
     original-data))

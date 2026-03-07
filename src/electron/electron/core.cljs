@@ -21,13 +21,13 @@
             [promesa.core :as p]))
 
 ;; Keep same as main/frontend.util.url
-(defonce LSP_SCHEME "logseq")
+(defonce LSP_SCHEME "pkm-notes")
 (defonce FILE_LSP_SCHEME "lsp")
 (defonce FILE_ASSETS_SCHEME "assets")
 (defonce LSP_PROTOCOL (str FILE_LSP_SCHEME "://"))
 (defonce PLUGIN_URL (str LSP_PROTOCOL "logseq.io/"))
 (defonce STATIC_URL (str LSP_PROTOCOL "logseq.com/"))
-(defonce PLUGINS_ROOT (.join node-path (.homedir os) ".logseq/plugins"))
+(defonce PLUGINS_ROOT (.join node-path (.homedir os) ".pkm-notes/plugins"))
 
 (defonce *setup-fn (volatile! nil))
 (defonce *teardown-fn (volatile! nil))

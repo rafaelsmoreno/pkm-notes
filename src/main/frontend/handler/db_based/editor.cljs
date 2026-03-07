@@ -72,7 +72,7 @@
 (defn save-file!
   "This fn is the db version of file-handler/alter-file"
   [path content]
-  (let [file-valid? (if (= path "logseq/config.edn")
+      (let [file-valid? (if (= path "pkm-notes/config.edn")
                       (do (config-edn-common-handler/detect-deprecations path content)
                           (config-edn-common-handler/validate-config-edn path content repo-config-schema/Config-edn))
                       true)]
@@ -84,10 +84,10 @@
                        :file/created-at (js/Date.)
                        :file/last-modified-at (js/Date.)}])
       ;; Post save
-       (cond (= path "logseq/config.edn")
+       (cond (= path "pkm-notes/config.edn")
              (p/let [_ (repo-config-handler/restore-repo-config! (state/get-current-repo) content)]
                (state/pub-event! [:shortcut/refresh]))
-             (= path "logseq/custom.css")
+             (= path "pkm-notes/custom.css")
              (ui-handler/add-style-if-exists!))))))
 
 (defn batch-set-heading!

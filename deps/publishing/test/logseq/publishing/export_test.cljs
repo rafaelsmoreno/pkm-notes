@@ -61,8 +61,8 @@
 (defn- create-logseq-graph
   "Creates a minimal graph to test publishing"
   [dir]
-  (fs/mkdirSync (path/join dir "logseq") #js {:recursive true})
-  (fs/writeFileSync (path/join dir "logseq" "config.edn") "{}")
+  (fs/mkdirSync (path/join dir "pkm-notes") #js {:recursive true})
+  (fs/writeFileSync (path/join dir "pkm-notes" "config.edn") "{}")
   (fs/mkdirSync (path/join dir "assets")))
 
 (deftest-async create-export-with-basic-graph

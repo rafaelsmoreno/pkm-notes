@@ -321,7 +321,7 @@
 (defn- <list-all-dbs
   []
   (let [dir? #(= (.-kind %) "directory")
-        db-dir-prefix ".logseq-pool-"]
+         db-dir-prefix ".pkm-notes-pool-"]
     (p/let [^js root (.getDirectory js/navigator.storage)
             values-iter (when (dir? root) (.values root))
             values (when values-iter (iter->vec values-iter))
@@ -332,7 +332,7 @@
       (log/info :db-dirs (map #(.-name %) db-dirs) :all-dirs (map #(.-name %) current-dir-dirs))
       (p/all (map (fn [dir]
                     (p/let [graph-name (-> (.-name dir)
-                                           (string/replace-first ".logseq-pool-" "")
+                                            (string/replace-first ".pkm-notes-pool-" "")
                                            ;; TODO: DRY
                                            (string/replace "+3A+" ":")
                                            (string/replace "++" "/"))

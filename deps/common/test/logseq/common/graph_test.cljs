@@ -18,7 +18,7 @@
 (defn- create-logseq-graph
   "Creates a minimal mock graph"
   [dir]
-  (fs/mkdirSync (node-path/join dir "logseq") #js {:recursive true})
+  (fs/mkdirSync (node-path/join dir "pkm-notes") #js {:recursive true})
   (fs/mkdirSync (node-path/join dir "journals"))
   (fs/mkdirSync (node-path/join dir "pages")))
 
@@ -28,9 +28,9 @@
   (fs/writeFileSync "tmp/test-graph/pages/foo.md" "")
   (fs/writeFileSync "tmp/test-graph/journals/2023_05_09.md" "")
   ;; Create files that are ignored
-  (fs/mkdirSync (node-path/join "tmp/test-graph" "logseq" "bak"))
-  (fs/writeFileSync "tmp/test-graph/logseq/bak/baz.md" "")
-  (fs/writeFileSync "tmp/test-graph/logseq/.gitignore" "")
+  (fs/mkdirSync (node-path/join "tmp/test-graph" "pkm-notes" "bak"))
+  (fs/writeFileSync "tmp/test-graph/pkm-notes/bak/baz.md" "")
+  (fs/writeFileSync "tmp/test-graph/pkm-notes/.gitignore" "")
   (is (= ["tmp/test-graph/journals/2023_05_09.md" "tmp/test-graph/pages/foo.md"]
          (common-graph/get-files "tmp/test-graph"))))
 

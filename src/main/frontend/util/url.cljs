@@ -3,7 +3,7 @@
   (:require [frontend.db.conn :as db-conn]))
 
 ;; Keep same as electron/electron.core
-(def LSP_SCHEME "logseq")
+(def LSP_SCHEME "pkm-notes")
 
 ;; Keep same as electron/electron.url
 (def encode js/encodeURI)

@@ -4,7 +4,7 @@
             ["path" :as node-path]
             [clojure.string :as string]))
 
-(def backup-dir "logseq/bak")
+(def backup-dir "pkm-notes/bak")
 
 (defn- get-backup-dir*
   [repo relative-path bak-dir]

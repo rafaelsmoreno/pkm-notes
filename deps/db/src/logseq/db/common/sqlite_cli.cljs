@@ -100,4 +100,4 @@
                                (node-path/join (or js/process.env.ORIGINAL_PWD ".") %))]
         ((juxt node-path/dirname node-path/basename) (resolve-path' graph-dir-or-path)))
       ;; TODO: Reuse with get-db-graphs-dir when there is a db ns that is usable by electron i.e. no better-sqlite3
-      [(node-path/join (os/homedir) "logseq" "graphs") graph-dir-or-path])))
+      [(node-path/join (os/homedir) "pkm-notes" "graphs") graph-dir-or-path])))

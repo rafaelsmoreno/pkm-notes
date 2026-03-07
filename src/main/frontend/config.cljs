@@ -222,7 +222,7 @@
 (def config-default-content (rc/inline "templates/config.edn"))
 
 ;; NOTE: repo-url is the unique identifier of a repo.
-;; - `logseq_db_GraphName` => db based graph, sqlite as backend
+;; - `pkm-notes_db_GraphName` => db based graph, sqlite as backend
 ;; - Use `""` while writing global files
 
 (defonce db-version-prefix common-config/db-version-prefix)
@@ -246,9 +246,9 @@
 (defn get-local-dir
   [repo]
   (path/path-join (get-in @state/state [:system/info :home-dir])
-                  "logseq"
-                  "graphs"
-                  (string/replace repo db-version-prefix "")))
+                   "pkm-notes"
+                   "graphs"
+                   (string/replace repo db-version-prefix "")))
 
 (defn get-electron-backup-dir
   [repo]
@@ -290,12 +290,12 @@
 (defn get-current-repo-assets-root
   []
   (when-let [repo-dir (get-repo-dir (state/get-current-repo))]
-    (path/path-join repo-dir "logseq" "assets")))
+    (path/path-join repo-dir "pkm-notes" "assets")))
 
 (defn get-repo-assets-root
   [repo]
   (when-let [repo-dir (get-repo-dir repo)]
-    (path/path-join repo-dir "logseq" "assets")))
+    (path/path-join repo-dir "pkm-notes" "assets")))
 
 (defn get-custom-js-path
   ([]

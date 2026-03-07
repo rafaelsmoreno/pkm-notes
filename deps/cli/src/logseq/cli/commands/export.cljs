@@ -14,7 +14,7 @@
 
 (defn- get-content-config [db]
   (let [repo-config (-> (d/q '[:find ?content
-                               :where [?b :file/path "logseq/config.edn"] [?b :file/content ?content]]
+                               :where [?b :file/path "pkm-notes/config.edn"] [?b :file/content ?content]]
                              db)
                         ffirst
                         common-util/safe-read-map-string)

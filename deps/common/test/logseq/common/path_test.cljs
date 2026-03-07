@@ -21,7 +21,7 @@
     (is (= "/foo/bar/baz/asdf" (path/path-join "/foo/bar//baz/asdf/quux/..")))
     (is (= "assets:///foo.bar/baz" (path/path-join "assets:///foo.bar" "baz")))
     (is (= "assets:///foo.bar/baz" (path/path-join "assets:///foo.bar/" "baz")))
-    (is (= "//NAS/MyGraph/logseq/config.edn" (path/path-join "//NAS/MyGraph" "logseq/config.edn")))))
+    (is (= "//NAS/MyGraph/pkm-notes/config.edn" (path/path-join "//NAS/MyGraph" "pkm-notes/config.edn")))))
 
 (deftest prepend-protocol
   (testing "prepend-protocol"

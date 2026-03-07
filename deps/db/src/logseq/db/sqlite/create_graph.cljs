@@ -193,28 +193,28 @@
      :logseq.property/built-in? true})])
 
 (defn- build-initial-files [config-content]
-  [{:block/uuid (common-uuid/gen-uuid :builtin-block-uuid "logseq/config.edn")
-    :file/path (str "logseq/" "config.edn")
+  [{:block/uuid (common-uuid/gen-uuid :builtin-block-uuid "pkm-notes/config.edn")
+    :file/path (str "pkm-notes/" "config.edn")
     :file/content config-content
     :file/created-at (js/Date.)
     :file/last-modified-at (js/Date.)}
-   {:block/uuid (common-uuid/gen-uuid :builtin-block-uuid "logseq/custom.css")
-    :file/path (str "logseq/" "custom.css")
+   {:block/uuid (common-uuid/gen-uuid :builtin-block-uuid "pkm-notes/custom.css")
+    :file/path (str "pkm-notes/" "custom.css")
     :file/content ""
     :file/created-at (js/Date.)
     :file/last-modified-at (js/Date.)}
-   {:block/uuid (common-uuid/gen-uuid :builtin-block-uuid "logseq/custom.js")
-    :file/path (str "logseq/" "custom.js")
+   {:block/uuid (common-uuid/gen-uuid :builtin-block-uuid "pkm-notes/custom.js")
+    :file/path (str "pkm-notes/" "custom.js")
     :file/content ""
     :file/created-at (js/Date.)
     :file/last-modified-at (js/Date.)}
-   {:block/uuid (common-uuid/gen-uuid :builtin-block-uuid "logseq/publish.css")
-    :file/path (str "logseq/" "publish.css")
+   {:block/uuid (common-uuid/gen-uuid :builtin-block-uuid "pkm-notes/publish.css")
+    :file/path (str "pkm-notes/" "publish.css")
     :file/content ""
     :file/created-at (js/Date.)
     :file/last-modified-at (js/Date.)}
-   {:block/uuid (common-uuid/gen-uuid :builtin-block-uuid "logseq/publish.js")
-    :file/path (str "logseq/" "publish.js")
+   {:block/uuid (common-uuid/gen-uuid :builtin-block-uuid "pkm-notes/publish.js")
+    :file/path (str "pkm-notes/" "publish.js")
     :file/content ""
     :file/created-at (js/Date.)
     :file/last-modified-at (js/Date.)}])

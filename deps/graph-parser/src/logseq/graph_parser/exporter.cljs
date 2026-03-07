@@ -1959,32 +1959,32 @@
                         :file/last-modified-at (js/Date.)}]))
 
 (defn- export-logseq-files
-  "Exports files under logseq/"
+  "Exports files under pkm-notes/"
   [repo-or-conn logseq-files <read-file {:keys [<save-file notify-user]
                                          :or {<save-file default-save-file}}]
-  (let [custom-css (first (filter #(string/ends-with? (:path %) "logseq/custom.css") logseq-files))
-        custom-js (first (filter #(string/ends-with? (:path %) "logseq/custom.js") logseq-files))]
+  (let [custom-css (first (filter #(string/ends-with? (:path %) "pkm-notes/custom.css") logseq-files))
+        custom-js (first (filter #(string/ends-with? (:path %) "pkm-notes/custom.js") logseq-files))]
     (-> (p/do!
          (when custom-css
            (-> (<read-file custom-css)
-               (p/then #(<save-file repo-or-conn "logseq/custom.css" %))))
+               (p/then #(<save-file repo-or-conn "pkm-notes/custom.css" %))))
          (when custom-js
            (-> (<read-file custom-js)
-               (p/then #(<save-file repo-or-conn "logseq/custom.js" %)))))
+               (p/then #(<save-file repo-or-conn "pkm-notes/custom.js" %)))))
         (p/catch (fn [error]
-                   (notify-user {:msg (str "Import unexpectedly failed while reading logseq files:\n" (.-message error))
+                   (notify-user {:msg (str "Import unexpectedly failed while reading config files:\n" (.-message error))
                                  :level :error
                                  :ex-data {:error error}}))))))
 
 (defn export-config-file
-  "Exports logseq/config.edn by saving to database and setting any properties related to config"
+  "Exports pkm-notes/config.edn by saving to database and setting any properties related to config"
   [repo-or-conn config-file <read-file {:keys [<save-file notify-user default-config]
                                         :or {default-config {}
                                              <save-file default-save-file}}]
   (-> (<read-file config-file)
       (p/then #(p/do!
-                (<save-file repo-or-conn
-                            "logseq/config.edn"
+                 (<save-file repo-or-conn
+                             "pkm-notes/config.edn"
                             ;; Converts a file graph config.edn for use with DB graphs. Unlike common-config/create-config-for-db-graph,
                             ;; manually dissoc deprecated keys for config to be valid
                             (pretty-print-dissoc % (keys common-config/file-only-config)))
@@ -2172,7 +2172,7 @@
            ;; Path normalization is needed just for windows
            normalized-rpath (fn [f]
                               (some-> (get f rpath-key) path/path-normalize))
-           logseq-file? #(string/starts-with? (normalized-rpath %) "logseq/")
+            logseq-file? #(string/starts-with? (normalized-rpath %) "pkm-notes/")
            asset-file? #(string/starts-with? (normalized-rpath %) "assets/")
            doc-files (->> files
                           (remove #(or (logseq-file? %) (asset-file? %)))

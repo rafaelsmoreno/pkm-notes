@@ -28,7 +28,7 @@
 
 (defn set-config!
   [k v]
-  (let [path "logseq/config.edn"]
+  (let [path "pkm-notes/config.edn"]
     (repo-config-set-key-value path k v)))
 
 (defn toggle-ui-show-brackets! []

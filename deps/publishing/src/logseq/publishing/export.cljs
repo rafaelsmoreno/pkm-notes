@@ -81,9 +81,9 @@
   [html static-dir repo-path output-dir {:keys [notification-fn]
                                          :or {notification-fn default-notification}
                                          :as options}]
-  (let [custom-css-path (node-path/join repo-path "logseq" "custom.css")
-        export-css-path (node-path/join repo-path "logseq" "export.css")
-        custom-js-path (node-path/join repo-path "logseq" "custom.js")
+  (let [custom-css-path (node-path/join repo-path "pkm-notes" "custom.css")
+        export-css-path (node-path/join repo-path "pkm-notes" "export.css")
+        custom-js-path (node-path/join repo-path "pkm-notes" "custom.js")
         output-static-dir (node-path/join output-dir "static")
         index-html-path (node-path/join output-dir "index.html")]
     (-> (p/let [_ (fs/mkdirSync output-static-dir #js {:recursive true})

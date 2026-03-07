@@ -120,8 +120,8 @@
   are full paths"
   [file-graph-dir conn {:keys [assets] :or {assets (atom [])} :as options}]
   (let [*files (build-graph-files file-graph-dir)
-        config-file (first (filter #(string/ends-with? (:path %) "logseq/config.edn") *files))
-        _ (assert config-file "No 'logseq/config.edn' found for file graph dir")
+        config-file (first (filter #(string/ends-with? (:path %) "pkm-notes/config.edn") *files))
+        _ (assert config-file "No 'pkm-notes/config.edn' found for file graph dir")
         options' (merge default-export-options
                         {:user-options (merge {:convert-all-tags? false} (dissoc options :assets :verbose))
                         ;; asset file options
@@ -243,9 +243,9 @@
 
     (testing "logseq files"
       (is (= ".foo {}\n"
-             (ffirst (d/q '[:find ?content :where [?b :file/path "logseq/custom.css"] [?b :file/content ?content]] @conn))))
+              (ffirst (d/q '[:find ?content :where [?b :file/path "pkm-notes/custom.css"] [?b :file/content ?content]] @conn))))
       (is (= "logseq.api.show_msg('hello good sir!');\n"
-             (ffirst (d/q '[:find ?content :where [?b :file/path "logseq/custom.js"] [?b :file/content ?content]] @conn)))))
+             (ffirst (d/q '[:find ?content :where [?b :file/path "pkm-notes/custom.js"] [?b :file/content ?content]] @conn)))))
 
     (testing "favorites"
       (is (= #{"Interstellar" "some page"}
@@ -827,7 +827,7 @@
 (deftest-async export-config-file-sets-title-format
   (p/let [conn (db-test/create-conn)
           read-file #(p/do! "{:journal/page-title-format \"yyyy-MM-dd\"}")
-          _ (gp-exporter/export-config-file conn "logseq/config.edn" read-file {})]
+          _ (gp-exporter/export-config-file conn "pkm-notes/config.edn" read-file {})]
     (is (= "yyyy-MM-dd"
            (:logseq.property.journal/title-format (d/entity @conn :logseq.class/Journal)))
         "title format set correctly by config")))

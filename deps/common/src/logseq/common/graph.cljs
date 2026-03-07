@@ -60,9 +60,9 @@ Rules:
 - Paths ending with '.DS_Store' are ignored
 - Dynamic caches used by Logseq are ignored: graph-txid.edn and pages-metadata.edn
 - Contents in '**/node_modules/' are ignored
-- Contents in '/logseq/.recycle/' are ignored
-- Contents in '/logseq/bak/' are ignored
-- Contents in '/logseq/version-files/' are ignored
+- Contents in '/pkm-notes/.recycle/' are ignored
+- Contents in '/pkm-notes/bak/' are ignored
+- Contents in '/pkm-notes/version-files/' are ignored
 - Other systems' dirs: '.obsidian/' (Obsidian), '.trash/' are ignored
 "
   [dir path]
@@ -72,9 +72,9 @@ Rules:
     (when (string? path)
       (or
        (some #(string/starts-with? rpath %)
-             ["." "logseq/.recycle" "logseq/bak" "logseq/version-files"
+             ["." "pkm-notes/.recycle" "pkm-notes/bak" "pkm-notes/version-files"
               ".obsidian" ".trash"])
-       (contains? #{"logseq/graphs-txid.edn" "logseq/pages-metadata.edn"} rpath)
+       (contains? #{"pkm-notes/graphs-txid.edn" "pkm-notes/pages-metadata.edn"} rpath)
        (some #(string/includes? rpath (str "/" % "/"))
              ["node_modules"])
        (some #(string/ends-with? rpath %)

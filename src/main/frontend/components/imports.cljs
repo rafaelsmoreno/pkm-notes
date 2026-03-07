@@ -41,8 +41,8 @@
 (defn- ignored-path?
   "Ignore path for ls-dir-files-with-handler! and reload-dir!"
   [dir path]
-  (let [ignores ["." ".recycle" "node_modules" "logseq/bak"
-                 "logseq/version-files" "logseq/graphs-txid.edn"
+  (let [ignores ["." ".recycle" "node_modules" "pkm-notes/bak"
+                 "pkm-notes/version-files" "pkm-notes/graphs-txid.edn"
                  ".obsidian" ".trash"]]
     (when (string? path)
       (or
@@ -54,7 +54,7 @@
                                        (str "/" % "/")
                                        (str % "/"))) ignores)
        (some #(string/ends-with? path %)
-             [".DS_Store" "logseq/graphs-txid.edn"])
+              [".DS_Store" "pkm-notes/graphs-txid.edn"])
       ;; hidden directory or file
        (let [relpath (node-path/relative dir path)]
          (or (re-find #"/\.[^.]+" relpath)
@@ -400,9 +400,9 @@
                                                (remove #(and (not (string/starts-with? (:path %) "assets/"))
                                                          ;; TODO: Update this when supporting more formats as this aggressively excludes most formats
                                                              (ignored-path? original-graph-name (.-webkitRelativePath (:file-object %))))))]
-                                (if-let [config-file (first (filter #(= (:path %) "logseq/config.edn") files))]
+                                (if-let [config-file (first (filter #(= (:path %) "pkm-notes/config.edn") files))]
                                   (import-file-graph files user-inputs config-file)
-                                  (notification/show! "Import failed as the file 'logseq/config.edn' was not found for a Logseq graph."
+                                  (notification/show! "Import failed as the file 'pkm-notes/config.edn' was not found."
                                                       :error)))))]
     (shui/dialog-open!
      #(import-file-graph-dialog original-graph-name

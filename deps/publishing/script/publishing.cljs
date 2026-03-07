@@ -12,7 +12,7 @@
   (let [db-name (node-path/basename graph-dir)
         conn (sqlite-cli/open-db! (node-path/dirname graph-dir) db-name)
         repo-config (-> (d/q '[:find ?content
-                               :where [?b :file/path "logseq/config.edn"] [?b :file/content ?content]]
+                               :where [?b :file/path "pkm-notes/config.edn"] [?b :file/content ?content]]
                              @conn)
                         ffirst
                         edn/read-string)]

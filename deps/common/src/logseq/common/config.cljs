@@ -26,14 +26,14 @@
                 (hidden? path patterns))) files)
     files))
 
-(def app-name "logseq")
+(def app-name "pkm-notes")
 
 (defonce asset-protocol "assets://")
 
-(defonce db-version-prefix "logseq_db_")
-(defonce file-version-prefix "logseq_local_")
+(defonce db-version-prefix "pkm-notes_db_")
+(defonce file-version-prefix "pkm-notes_local_")
 
-(defonce local-assets-dir "logseq/assets")
+(defonce local-assets-dir "pkm-notes/assets")
 (defonce unlinked-graphs-dir "Unlinked graphs")
 
 (defonce favorites-page-name "$$$favorites")

@@ -48,9 +48,9 @@
 (comment
   (defn- get-built-in-files
     [db]
-    (let [files ["logseq/config.edn"
-                 "logseq/custom.css"
-                 "logseq/custom.js"]]
+    (let [files ["pkm-notes/config.edn"
+                 "pkm-notes/custom.css"
+                 "pkm-notes/custom.js"]]
       (map #(d/pull db '[*] [:file/path %]) files))))
 
 (defn- get-all-files

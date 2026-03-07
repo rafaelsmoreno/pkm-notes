@@ -10,7 +10,7 @@
 
 (defn- get-repo-config-content
   [repo-url]
-  (db/get-file repo-url "logseq/config.edn"))
+  (db/get-file repo-url "pkm-notes/config.edn"))
 
 (defn read-repo-config
   "Converts file content to edn"

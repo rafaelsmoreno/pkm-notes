@@ -400,7 +400,7 @@
   (let [[config id attr _code theme user-options] (:rum/args state)
         edit-block (:block config)
         code-block (:code-block config)
-        config-file? (= (:file-path config) "logseq/config.edn")
+        config-file? (= (:file-path config) "pkm-notes/config.edn")
         _ (state/set-state! :editor/code-mode? false)
         original-mode (get attr :data-lang)
         *editor-ref (get attr :editor-ref)
