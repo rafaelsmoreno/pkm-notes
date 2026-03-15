@@ -76,3 +76,8 @@ clj-e2e/e2e-dump
 .dir-locals.el
 .projectile
 PKM-SESSION.md
+
+# Security: keystores and SSL artifacts
+ssl/
+*.jks
+*.keystore
