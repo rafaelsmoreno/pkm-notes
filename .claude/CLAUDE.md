@@ -1,4 +1,12 @@
+@.claude/NEXT_SESSION.md
+
 # pkm-notes — Project Rules
+
+## Start Here
+
+- Read `KICKSTART.md` (repo root) for the previous session's next steps.
+- Read `.claude/NEXT_SESSION.md` for injected session state (auto-populated above).
+- This is a complex ClojureScript codebase — always run `bb dev:lint-and-test` before committing.
 
 ## Project
 
