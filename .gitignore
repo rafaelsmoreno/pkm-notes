@@ -81,3 +81,6 @@ PKM-SESSION.md
 ssl/
 *.jks
 *.keystore
+
+# Dev certificates and build artifacts (mkcert)
+android/app/src/main/res/raw/
