@@ -82,5 +82,5 @@ ssl/
 *.jks
 *.keystore
 
-# Dev certificates (mkcert)
-android/app/src/main/res/raw/logseq_local.pem
+# Dev certificates and build artifacts (mkcert)
+android/app/src/main/res/raw/
