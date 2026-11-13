@@ -1,20 +1,21 @@
 # Kickstart Prompt — pkm-notes
 
-Last updated: 2026-03-22
+Last updated: 2026-11-13
+Base commit: 068af085cb60bb28d56f6c08287dc0cbff6be432
 Maintained by `scripts/update_kickstart.py` — do not edit manually.
 
 ---
 
-## Paste this at the start of the next session:
+## Session bootstrap — /kickstart reads and executes this automatically:
 
 ```
 Repo: pkm-notes — continuing from previous session.
 
-## Last completed (2026-03-22)
-M4 CLAUDE.md consolidation done (PR merged). pkm-notes is a Logseq fork rebranded. All on-disk paths rebranded from logseq to pkm-notes (2026-03-13).
+## Last completed (2026-11-13)
+M4 CLAUDE.md consolidation done (PR merged). pkm-notes is a Logseq fork rebranded. All on-disk paths rebranded from logseq to pkm-notes (2026-03-13). REFRESHED 2026-11-13 (handoff bookkeeping only; no session worked this repo): the handoff had gone stale against main. Commits that landed since it was last written, taken from the commit log rather than from any session record, so no narrative beyond the subjects is available: 068af08 chore: remove pr-labeler workflow — cosmetic noise on a personal fork (#7);4400290 fix(ci): add continue-on-error to PR Labeler — branch may be deleted before action runs (#6);70cb358 chore: gitignore android/raw/ directory (replaces file-level ignore) (#5);
 
 ## Current branch
-docs/m6-audit-fixes
+main
 
 ## Open PRs
   (none)
